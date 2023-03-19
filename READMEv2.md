@@ -38,14 +38,10 @@ In the example file [`example.py`](https://github.com/ZiadHatab/scpi-anritsu-vec
 
 As `.s2p` files store 4 complex-valued parameters, the formate for the a-waves and b-waves are given as below:
 
-$$
-\mathbf{A} = \begin{bmatrix} a_{11} & a_{12}\\ a_{21} & a_{22}\end{bmatrix}; \qquad \mathbf{B} = \begin{bmatrix} b_{11} & b_{12}\\ b_{21} & b_{22}\end{bmatrix},
-$$
+<p align="center"><img src="https://github.com/ZiadHatab/scpi-anritsu-vectorstar/blob/main/svgs/01d2060019f726dd7718597468d32454.svg?invert_in_darkmode" align=middle width=276.5789268pt height=39.452455349999994pt/></p>
 where the indices _ij_ for both wave parameters indicate the _i_-th receiver, when excited by the _j_-th port. Remember, there are two ports, and two receivers for each wave parameter.
 
 The S-parameters are calculated as follows:
-$$
-\mathbf{S} = \mathbf{B}\mathbf{A}^{-1}
-$$
+<p align="center"><img src="https://rawgit.com/ZiadHatab/scpi-anritsu-vectorstar/main/svgs/77de977d68ce3f92c99f45411f3b06f2.svg?invert_in_darkmode" align=middle width=76.9860102pt height=14.202794099999998pt/></p>
 
 <!-- EOF -->
