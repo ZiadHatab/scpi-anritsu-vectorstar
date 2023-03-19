@@ -44,8 +44,10 @@ $$
 where the indices _ij_ for both wave parameters indicate the _i_-th receiver, when excited by the _j_-th port. Remember, there are two ports, and two receivers for each wave parameter.
 
 The S-parameters are calculated as follows:
-$$
+\[
+\left[
 \mathbf{S} = \mathbf{B}\mathbf{A}^{-1}
-$$
+\right]
+\]
 
 <!-- EOF -->
