@@ -39,7 +39,7 @@ In the example file [`example.py`](https://github.com/ZiadHatab/scpi-anritsu-vec
 As `.s2p` files store 4 complex-valued parameters, the formate for the a-waves and b-waves are given as below:
 
 $$
-\mathbf{A} = \begin{bmatrix} a_{11} & a_{12}\\ a_{21} & a_{22}\end{bmatrix}; \qquad \mathbf{B} = \begin{bmatrix} b_{11} & b_{12}\\ b_{21} & b_{22}\end{bmatrix},
+\mathbf{A} = \begin{bmatrix} a_{11} & a_{12}\\\ a_{21} & a_{22}\end{bmatrix}; \qquad \mathbf{B} = \begin{bmatrix} b_{11} & b_{12}\\\ b_{21} & b_{22}\end{bmatrix},
 $$
 
 where the indices _ij_ for both wave parameters indicate the _i_-th receiver, when excited by the _j_-th port. Remember, there are two ports, and two receivers for each wave parameter.
