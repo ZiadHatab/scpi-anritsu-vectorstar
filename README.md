@@ -2,11 +2,11 @@
 
 SCPI python script for collecting raw (uncalibrated) wave parameters from the 2-port Anritsu VectorStar VNA.
 
-The script has been tested exclusively on the MS4647B VNA (10 MHz to 70 GHz) and in extended mode on the ME7838D VNA (up to 145 GHz).
+The script has been tested exclusively on the MS4647B VNA (10 MHz to 70 GHz) and in extended mode on the ME7838D VNA (up to 145 GHz). The implemented SCPI commands are taken from the file [__Anritsu Programming Manual - VectorStar MS464xB Series Microwave Vector Network Analyzer.pdf__](https://www.anritsu.com/en-us/test-measurement/support/downloads?model=MS4640B%20Series).
 
 ## Code requirement
 
-You need two packages installed in your python environment [`pyvisa`](https://pyvisa.readthedocs.io/en/latest/index.html) and [numpy](https://numpy.org/install/), both which can be installed as follows:
+You need two packages installed in your python environment [`pyvisa`](https://pyvisa.readthedocs.io/en/latest/index.html) and [`numpy`](https://numpy.org/install/), both which can be installed as follows:
 
 ```powershell
 python -m pip install -U pyvisa numpy
