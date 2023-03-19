@@ -12,7 +12,7 @@ You need two packages installed in your python environment [`pyvisa`](https://py
 python -m pip install -U pyvisa numpy
 ```
 
-Additionally, you need to also install a VISA [backend](https://pyvisa.readthedocs.io/en/latest/introduction/getting.html):
+You also need to install a VISA [backend](https://pyvisa.readthedocs.io/en/latest/introduction/getting.html):
 
 ```powershell
 python -m pip install -U pyvisa-py
@@ -20,7 +20,7 @@ python -m pip install -U pyvisa-py
 
 You basically load the file [`vectorstar.py`](https://github.com/ZiadHatab/scpi-anritsu-vectorstar/blob/main/vectorstar.py) in your main script and start collecting data. For the example file [`example.py`](https://github.com/ZiadHatab/scpi-anritsu-vectorstar/blob/main/example.py), please check its dependency directly in the file.
 
-## Sample Code
+## Sample code
 
 ```python
     import numpy as np
