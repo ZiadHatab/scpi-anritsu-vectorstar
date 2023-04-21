@@ -80,6 +80,16 @@ def raw_sweep(address='GPIB0::6::INSTR', num_sweeps=1,
         
         # force source 1 and 2 to be in-sync
         vna.write(':SENSe1:OFFSet:PHASe:SYNChronization ON')
+                    
+        # backup fab cal state and turn it off
+        fabcal_state0 = vna.query_ascii_values('FRCVCALON?', converter='s', separator='\n')[0]
+        vna.write('FRCVCALON 0') # turn off
+        fabcal_state1 = vna.query_ascii_values('FRFCALON?', converter='s', separator='\n')[0]
+        vna.write('FRFCALON 0') # turn off
+        
+        # backup user cal state and turn it off
+        usercal_state = vna.query_ascii_values(':SENSe1:CORRection:STATe?', converter='s', separator='\n')[0]
+        vna.write(':SENSe1:CORRection:STATe 0') # turn off
         
         # set source power level
         # standard device
@@ -112,17 +122,7 @@ def raw_sweep(address='GPIB0::6::INSTR', num_sweeps=1,
         fnum_old = vna.query_ascii_values(':SENSe1:SWEep:POINt?', converter='s', separator='\n')[0]
         if fnum is not None:
             vna.write(f':SENSe1:SWEep:POINt {fnum}')
-            
-        # backup fab cal state and turn it off
-        fabcal_state0 = vna.query_ascii_values('FRCVCALON?', converter='s', separator='\n')[0]
-        vna.write('FRCVCALON 0') # turn off
-        fabcal_state1 = vna.query_ascii_values('FRFCALON?', converter='s', separator='\n')[0]
-        vna.write('FRFCALON 0') # turn off
-        
-        # backup user cal state and turn it off
-        usercal_state = vna.query_ascii_values(':SENSe1:CORRection:STATe?', converter='s', separator='\n')[0]
-        vna.write(':SENSe1:CORRection:STATe 0') # turn off
-        
+
         # backup number of traces and set it to 8 (wave parameters)
         trace_state = vna.query_ascii_values(':CALCulate1:PARameter:COUNt?', converter='s', separator='\n')[0]
         vna.write(':CALCulate1:PARameter:COUNt 8')
