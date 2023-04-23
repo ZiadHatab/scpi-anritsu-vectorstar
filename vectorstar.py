@@ -199,9 +199,6 @@ def raw_sweep(address='GPIB0::6::INSTR', num_sweeps=1,
             vna.write(f':CALCulate1:PARameter{inx+1}:FORMat {fm}')
             vna.write(f':CALCulate1:PARameter{inx+1}:DEFine {tr}')
         vna.write(f':CALCulate1:PARameter:COUNt {trace_state}')
-        vna.write(f':SENSe1:CORRection:STATe {usercal_state}')
-        vna.write(f'FRCVCALON {fabcal_state0}')
-        vna.write(f'FRFCALON {fabcal_state1}')
         vna.write(f':SENSe1:BWIDth {ifbw_old}')
         vna.write(f':SENSe1:FREQuency:STARt {fstart_old}')
         vna.write(f':SENSe1:FREQuency:STOP {fstop_old}')
@@ -210,6 +207,9 @@ def raw_sweep(address='GPIB0::6::INSTR', num_sweeps=1,
         vna.write(f':SOURce1:MODBB:POWer:PORT2 {pw_extd_old_p2}') # extended for freq > 54GHz (in dbm)
         vna.write(f':SOURce1:POWer:PORT1 {pw_stnd_old_p1}')  # standard (in dbm)
         vna.write(f':SOURce1:POWer:PORT2 {pw_stnd_old_p2}')  # standard (in dbm)
+        vna.write(f':SENSe1:CORRection:STATe {usercal_state}')
+        vna.write(f'FRCVCALON {fabcal_state0}')
+        vna.write(f'FRFCALON {fabcal_state1}')
         
         vna.write(':SENSe:HOLD:FUNCtion CONTinuous')
         vna.write('RTL') # exit remote mode
