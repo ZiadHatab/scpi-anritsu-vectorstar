@@ -22,7 +22,100 @@ import numpy as np  # python -m pip install numpy
 import time
 from datetime import timedelta
 
-def raw_sweep(address='GPIB0::6::INSTR', num_sweeps=1, 
+
+def read_traces(address='GPIB0::6::INSTR', num_sweeps=1, 
+                channels=[1], timeout=30000):
+    '''
+    Read the traces from the VNA as complex-valued.
+    
+    Parameters
+    ----------
+    address : str
+        The address of the VNA. This can TCP (ethernet) or GPIB. 
+        The default is 'GPIB0::6::INSTR'.
+    channels : list of int
+        The channels to read. The default is [1].
+    timeout : int
+        The timeout in ms. The default is 30000.
+        Returns
+    -------
+    frequencies : list of ndarray
+        array containing the frequency.
+    measurements : list of ndarray
+        array containing all sweeps of the traces on the selected channels. Index style [channel, sweep, freq, rx-port, tx-port]
+    trace_definitions : list of list
+        list containing the definition of the measured traces. Index style [channel].
+    '''
+
+    channels = np.atleast_1d(channels)
+    with pyvisa.ResourceManager().open_resource(address) as vna:
+        vna.timeout = timeout # Set time out duration in ms
+        vna.clear()
+        vna.write('LANG NATIVE')
+        vna.write(':SYSTem:ERRor:CLEar')
+        
+        frequencies = []
+        measurements = []
+        trace_definitions = []
+        for ch in channels:
+            # force source 1 and 2 to be in-sync
+            vna.write(f':SENSe{ch}:OFFSet:PHASe:SYNChronization ON')
+            number_of_traces = vna.query_ascii_values(f':CALCulate{ch}:PARameter:COUNt?', converter='s', separator='\n')[0]
+            number_of_traces = int(number_of_traces)
+            
+            old_format = []
+            current_trace_def = []
+            for trace in range(number_of_traces):
+                old_format.append(vna.query_ascii_values(f':CALCulate{ch}:PARameter{trace+1}:FORMat?', converter='s', separator='\n')[0])
+                current_trace_def.append(vna.query_ascii_values(f':CALCulate{ch}:PARameter{trace+1}:DEFine?', converter='s', separator='\n')[0])
+                vna.write(f':CALCulate{ch}:PARameter{trace+1}:FORMat REIMaginary')
+
+            # collect sweep measurements
+            meas = []
+            vna.write('LSB;FMB')     # set to read in binary
+            tic_total = time.time()
+            print(f'Sweep started on channel {ch}:')
+            try:
+                for sweep in range(num_sweeps):  # number of sweeps
+                    vna.write(':SENSe:HOLD:FUNCtion HOLD') # hold sweep
+                    vna.write(':TRIG:SING') # run single sweep
+                    all_data = []
+                    tic = time.time()
+                    for trace in range(number_of_traces):
+                        vna.write(f':CALCulate{ch}:PARameter{trace+1}:SELect')  # select active trace
+                        data = vna.query_binary_values(f':CALCulate{ch}:DATA:FDATa?', datatype='d', container=np.array).reshape((-1,2))
+                        data = data[:,0] + data[:,1]*1j   # construct back to complex number
+                        all_data.append(data)
+                    toc = time.time()
+                    swp_time = toc-tic
+                    remain_time = timedelta(seconds=(num_sweeps-sweep-1)*swp_time)
+                    print(f'Sweep {sweep+1:0{len(str(num_sweeps))}d}/{num_sweeps} (sweep time {swp_time:.2f} sec) [est. remaining time: {remain_time}]')
+                    meas.append(all_data)
+            except KeyboardInterrupt:
+                print('Sweep Canceled!!!')
+            toc_total = time.time()
+            print(f'Total sweep time {toc_total-tic_total:.2f} sec\n')
+
+            meas = np.array(meas)            
+            f = vna.query_binary_values(f':SENSe{ch}:FREQuency:DATA?', datatype='d', container=np.array)
+
+            frequencies.append(f)
+            measurements.append(meas)
+            trace_definitions.append(current_trace_def)
+
+            vna.write('FMA') # set back to read in ascii
+
+            # revert stuff back
+            for inx,fm in enumerate(old_format):
+                vna.write(f':CALCulate1:PARameter{inx+1}:FORMat {fm}')
+        
+        vna.write(':SENSe:HOLD:FUNCtion CONTinuous')
+        vna.write('RTL') # exit remote mode
+
+    return frequencies, measurements, trace_definitions
+
+
+def raw_waves_sweep(address='GPIB0::6::INSTR', num_sweeps=1, 
               ifbw=None, fstart=None, fstop=None, fnum=None,
               pw_stnd=None, pw_extd=None, timeout=30000):
     '''
@@ -217,6 +310,8 @@ def raw_sweep(address='GPIB0::6::INSTR', num_sweeps=1,
         return f, MCA, MCB, timestamps, settings
 
 if __name__=='__main__':
-    pass
+    frequencies, measurements, trace_definitions = read_traces(address='GPIB0::6::INSTR', num_sweeps=1)
+
+
 
 # EOF

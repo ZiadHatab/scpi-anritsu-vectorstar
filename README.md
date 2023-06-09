@@ -1,6 +1,6 @@
 # Python SCPI for Anritsu Vectorstar
 
-SCPI python script for collecting raw (uncalibrated) wave parameters from the 2-port Anritsu VectorStar VNA.
+Python SCPI script to collect complex-valued trace data from an Anritsu VectorStar VNA. It also includes an additional function for collecting raw (uncalibrated) wave parameters from the 2-port Anritsu VectorStar VNA.
 
 The script has been tested exclusively on the MS4647B VNA (10 MHz to 70 GHz) and in extended mode on the ME7838D VNA (up to 145 GHz). The implemented SCPI commands are taken from the file [__Anritsu Programming Manual - VectorStar MS464xB Series Microwave Vector Network Analyzer.pdf__](https://www.anritsu.com/en-us/test-measurement/support/downloads?model=MS4640B%20Series).
 
@@ -20,16 +20,31 @@ python -m pip install -U pyvisa-py
 
 You basically load the file [`vectorstar.py`](https://github.com/ZiadHatab/scpi-anritsu-vectorstar/blob/main/vectorstar.py) in your main script and start collecting data. For the example file [`example.py`](https://github.com/ZiadHatab/scpi-anritsu-vectorstar/blob/main/example.py), please check its dependency directly in the file.
 
-## Sample code
+## Code snippet
+
+With the code below you can collect complex-valued traces on the screen without changing any settings. Simply define the channel and number of sweeps to collect.
 
 ```python
     import numpy as np
     import vectorstar as vna # my code
 
-    f, MCA, MCB, timestamps, settings = vna.raw_sweep(address='TCPIP::169.254.63.67::INSTR', 
-                                                      num_sweeps=100, ifbw=1000, fnum=299, 
+    frequencies, measurements, trace_definitions = vna.read_traces(address='GPIB0::6::INSTR', num_sweeps=10, channels=[1])
+    # trace_definitions gives the definition of the collected data in the same order as stored in the 'measurements' variable
+    # the variable frequencies holds the frequency grid for each selected channel.
+```
+
+Here, you can collect all eight wave parameters when the VNA operates as a two-port system. Additionally, you can change the stimulus settings. After collecting the data, the VNA's settings return to whatever they were before running the script. Currently only data collection from channel 1 is supported. Alternatively, you set the wave parameters manually on the screen and use the function `vna.read_traces()` to read the traces from any channel.
+
+```python
+    import numpy as np
+    import vectorstar as vna # my code
+
+    f, MCA, MCB, timestamps, settings = vna.raw_waves_sweep(address='GPIB0::6::INSTR', 
+                                                      num_sweeps=10, ifbw=1000, fnum=299, 
                                                       fstart=1e9, fstop=150e9, 
                                                       pw_stnd=-10, pw_extd=-10)
+    # MCA contain all 4 a-waves
+    # MCB contain all 4 b-waves
 ```
 
 ## Computing S-parameters from wave parameters

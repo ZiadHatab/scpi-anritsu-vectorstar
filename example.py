@@ -37,8 +37,8 @@ if __name__=='__main__':
     filename = 'test_data'
     os.mkdir(folder_path + '\\' + filename)
     
-    f, MCA, MCB, timestamps, settings = vna.raw_sweep(address='TCPIP::169.254.63.67::INSTR', 
-                                     num_sweeps=100, ifbw=1000, fnum=299,
+    f, MCA, MCB, timestamps, settings = vna.raw_waves_sweep(address='TCPIP::169.254.63.67::INSTR', 
+                                     num_sweeps=10, ifbw=1000, fnum=299,
                                      fstart=1e9, fstop=150e9,
                                      pw_stnd=-10, pw_extd=-10)
     
@@ -57,5 +57,10 @@ if __name__=='__main__':
     # plot the S-parameters in dB
     plt.figure()
     NW.plot_s_db()
+
+    # read the traces on the VNA
+    fs, meas, trace_def = vna.read_traces(address='TCPIP::169.254.63.67::INSTR', num_sweeps=10, channels=[1])
+    f = fs[0]
+    S11 = meas[0][:,0,:]  # this depends on the traces displayed on the screen (check the variable trace_def on what was defined and the order)
 
     plt.show()
