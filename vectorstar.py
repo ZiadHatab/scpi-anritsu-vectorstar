@@ -48,7 +48,7 @@ def read_traces(address='GPIB0::6::INSTR', num_sweeps=1,
     '''
 
     channels = np.atleast_1d(channels)
-    with pyvisa.ResourceManager().open_resource(address) as vna:
+    with pyvisa.ResourceManager('@py').open_resource(address) as vna:
         vna.timeout = timeout # Set time out duration in ms
         vna.clear()
         vna.write('LANG NATIVE')
@@ -161,7 +161,7 @@ def raw_waves_sweep(address='GPIB0::6::INSTR', num_sweeps=1,
         Summery of applied settings. The same as input arguments.
     '''
     
-    with pyvisa.ResourceManager().open_resource(address) as vna:
+    with pyvisa.ResourceManager('@py').open_resource(address) as vna:
         vna.DefaultBufferSize = 1600000 # Set input buffer size
         vna.timeout = timeout # Set time out duration in ms
         vna.clear()
