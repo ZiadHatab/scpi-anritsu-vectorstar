@@ -312,6 +312,4 @@ def raw_waves_sweep(address='GPIB0::6::INSTR', num_sweeps=1,
 if __name__=='__main__':
     frequencies, measurements, trace_definitions = read_traces(address='GPIB0::6::INSTR', num_sweeps=1)
 
-
-
 # EOF
